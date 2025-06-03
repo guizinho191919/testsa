@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}{{ titulo }}{% endblock %}
+
+{% block content %}
+<div class="col-lg-6 col-xl-5 mx-auto">
+  <div class="card shadow-sm rounded-4">
+    <div class="card-body p-4">
+      <h1 class="h4 fw-bold mb-4">{{ titulo }}</h1>
+
+      <form method="post" class="needs-validation" novalidate>
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="d-flex gap-2 mt-3">
+          <button class="btn btn-primary flex-fill">
+            <i class="bi bi-check-lg me-1"></i>Salvar
+          </button>
+          <a class="btn btn-outline-secondary flex-fill" href="{% url 'inventory:dashboard' %}">Cancelar</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

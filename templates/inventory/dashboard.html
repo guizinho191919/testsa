@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - Estoque Precision Pro{% endblock %}
+
+{% block content %}
+<!-- Stats Cards Premium -->
+<div class="row g-4 mb-5">
+  <div class="col-md-4">
+    <div class="stats-card card-premium h-100">
+      <div class="card-body">
+        <div class="d-flex align-items-center">
+          <div class="stats-icon bg-success">
+            <i class="bi bi-check-circle"></i>
+          </div>
+          <div class="ms-3">
+            <h3 class="stats-number text-success">{{ itens_ok_count }}</h3>
+            <p class="stats-label">Itens OK</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-md-4">
+    <div class="stats-card card-premium h-100">
+      <div class="card-body">
+        <div class="d-flex align-items-center">
+          <div class="stats-icon bg-warning">
+            <i class="bi bi-exclamation-triangle"></i>
+          </div>
+          <div class="ms-3">
+            <h3 class="stats-number text-warning">{{ itens_alerta_count }}</h3>
+            <p class="stats-label">Em Alerta</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-md-4">
+    <div class="stats-card card-premium h-100">
+      <div class="card-body">
+        <div class="d-flex align-items-center">
+          <div class="stats-icon bg-primary">
+            <i class="bi bi-boxes"></i>
+          </div>
+          <div class="ms-3">
+            <h3 class="stats-number text-primary">{{ itens.count }}</h3>
+            <p class="stats-label">Total de Itens</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Action Buttons -->
+<div class="row g-3 mb-4">
+  <div class="col-md-6">
+    <a href="{% url 'inventory:item_create' %}" class="btn btn-premium btn-lg w-100">
+      <i class="bi bi-plus-circle me-2"></i>Novo Item
+    </a>
+  </div>
+  <div class="col-md-6">
+    <a href="{% url 'inventory:mov_create' %}" class="btn btn-outline-premium btn-lg w-100">
+      <i class="bi bi-arrow-left-right me-2"></i>Nova Movimentação
+    </a>
+  </div>
+</div>
+
+<!-- Items Table -->
+<div class="card card-premium">
+  <div class="card-header">
+    <h5 class="card-title mb-0">
+      <i class="bi bi-list-ul me-2"></i>Inventário
+    </h5>
+  </div>
+  <div class="card-body p-0">
+    {% if itens %}
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Nome</th>
+              <th>Código</th>
+              <th>Local</th>
+              <th>Quantidade</th>
+              <th>Estoque Mín.</th>
+              <th>Status</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in itens %}
+              <tr class="{% if item.em_alerta %}table-warning{% endif %}">
+                <td class="fw-medium">{{ item.nome }}</td>
+                <td><code>{{ item.codigo_referencia }}</code></td>
+                <td>{{ item.local_prateleira|default:"-" }}</td>
+                <td>
+                  <span class="badge {% if item.em_alerta %}bg-warning{% else %}bg-success{% endif %}">
+                    {{ item.quantidade }}
+                  </span>
+                </td>
+                <td>{{ item.estoque_minimo }}</td>
+                <td>
+                  {% if item.em_alerta %}
+                    <span class="badge bg-warning">
+                      <i class="bi bi-exclamation-triangle me-1"></i>Alerta
+                    </span>
+                  {% else %}
+                    <span class="badge bg-success">
+                      <i class="bi bi-check-circle me-1"></i>OK
+                    </span>
+                  {% endif %}
+                </td>
+                <td>
+                  <div class="btn-group btn-group-sm">
+                    <a href="{% url 'inventory:item_update' item.pk %}" 
+                       class="btn btn-outline-primary" title="Editar">
+                      <i class="bi bi-pencil"></i>
+                    </a>
+                    <a href="{% url 'inventory:item_delete' item.pk %}" 
+                       class="btn btn-outline-danger" title="Excluir">
+                      <i class="bi bi-trash"></i>
+                    </a>
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div class="text-center py-5">
+        <i class="bi bi-inbox display-1 text-muted"></i>
+        <h4 class="text-muted mt-3">Nenhum item cadastrado</h4>
+        <p class="text-muted">Comece adicionando seu primeiro item ao estoque.</p>
+        <a href="{% url 'inventory:item_create' %}" class="btn btn-premium">
+          <i class="bi bi-plus-circle me-2"></i>Adicionar Item
+        </a>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
